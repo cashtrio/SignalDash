@@ -1,6 +1,6 @@
 # Pull request format
 
-This is a PR format for Minlink project.
+This is a PR format for SignalDash project.
 
 ## What's changed
 

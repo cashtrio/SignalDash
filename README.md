@@ -37,12 +37,11 @@ TBD
 
 ## Tech stack
 
-| Section | Details               |
-| ------- | --------------------- |
-| Client  | `fyne`                |
-| Server  | `go (native)`, `gorm` |
-| DB      | `sqlite`              |
-| Infra   | `none (local binary)` |
+| Section | Details                 |
+| ------- | ----------------------- |
+| Client  | `fyne`                  |
+| Server  | `gin`, `swagger` `gorm` |
+| DB      | `sqlite`                |
 
 ## License
 

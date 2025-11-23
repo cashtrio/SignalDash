@@ -2,7 +2,7 @@ name: auto label
 
 on:
   pull_request:
-     types: [opened, reopened]
+    types: [opened, reopened]
 
 jobs:
   add-labels:
@@ -15,10 +15,10 @@ jobs:
         with:
           labels: enhancement
 
-      - uses: actions-ecosystem/action-add-labels@v1
-        if: startsWith(github.head_ref, 'test/')
-        with:
-          labels: test
+      # - uses: actions-ecosystem/action-add-labels@v1
+      #   if: startsWith(github.head_ref, 'test/')
+      #   with:
+      #     labels: test
 
       - uses: actions-ecosystem/action-add-labels@v1
         if: startsWith(github.head_ref, 'bugfix/')
@@ -35,7 +35,7 @@ jobs:
         with:
           labels: documentation
 
-      - uses: actions-ecosystem/action-add-labels@v1
-        if: startsWith(github.head_ref, 'sync/')
-        with:
-          labels: sync
+      # - uses: actions-ecosystem/action-add-labels@v1
+      #   if: startsWith(github.head_ref, 'sync/')
+      #   with:
+      #     labels: sync

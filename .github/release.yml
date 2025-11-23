@@ -5,18 +5,18 @@ changelog:
       - stale
       - dependencies
   categories:
-    - title: 🏃 Running this week sprint
-      labels:
-        - sync
+    # - title: 🏃 Running this week sprint
+    #   labels:
+    #     - sync
     - title: 🎉 Exciting New Features
       labels:
         - enhancement
-    - title: 🐛 Bug found 
+    - title: 🐛 Bug found
       labels:
         - bug
     - title: 📰 Archiving thoughts and researches
       labels:
-        - documentation
+        - docs
     - title: 🔨 Improving previous codes written
       labels:
         - refactor
