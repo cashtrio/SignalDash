@@ -4,17 +4,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/developerasun/SignalDash/server/config"
 	"github.com/developerasun/SignalDash/server/controller"
 	docs "github.com/developerasun/SignalDash/server/docs"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-
-	env "github.com/joho/godotenv"
 )
 
 // @title SignalDash API
@@ -22,23 +19,13 @@ import (
 // @description SignalDash backend API documentation
 // @BasePath /
 func main() {
-	wd, gErr := os.Getwd()
-
-	if gErr != nil {
-		log.Fatalln(gErr.Error())
+	options := &config.ViperOptions{
+		Filename:  "options",
+		ConfigDir: "config",
 	}
+	v := options.InitConfig()
+	port := v.GetString("server.port")
 
-	envPath := strings.Join([]string{wd, "/", ".run.env"}, "")
-	log.Println("main.go: envPath: " + envPath)
-
-	hasError := env.Load(envPath)
-	if hasError != nil {
-		log.Fatalln("main.go: can't load secrets correctly", hasError.Error())
-		return
-	}
-	log.Println("main.go: env loaded")
-
-	log.Println("main.go: start initiating gin server")
 	apiServer := gin.Default()
 	apiServer.SetTrustedProxies(nil)
 
@@ -51,7 +38,7 @@ func main() {
 
 	apiServer.GET("/api/health", controller.Health)
 
-	apiServer.Run(":" + os.Getenv("PORT"))
+	apiServer.Run(":" + port)
 	log.Println("main.go: router started")
 }
 
