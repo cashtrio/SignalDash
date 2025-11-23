@@ -5,15 +5,15 @@ import (
 	"gorm.io/gorm"
 )
 
-type Repository struct {
+type IndicatorRepository struct {
 	db *gorm.DB
 }
 
-func NewIndicator(db *gorm.DB) *Repository {
-	return &Repository{db: db}
+func NewIndicator(db *gorm.DB) *IndicatorRepository {
+	return &IndicatorRepository{db: db}
 }
 
-func (r *Repository) FindOne(name string) (*models.Indicator, error) {
+func (r *IndicatorRepository) FindOne(name string) (*models.Indicator, error) {
 	var i models.Indicator
 	tx := r.db.First(&i, "name = ?", name)
 
