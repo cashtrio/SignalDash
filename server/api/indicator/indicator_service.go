@@ -1,13 +1,19 @@
-package toolkit
+package indicator
 
 import (
 	"fmt"
 	"log"
 	"regexp"
+	"strconv"
 	"strings"
 
+	"github.com/developerasun/SignalDash/server/models"
 	colly "github.com/gocolly/colly/v2"
 )
+
+type IndicatorService struct {
+	repo *IndicatorRepo
+}
 
 type Crawler interface {
 	Init() *colly.Collector
@@ -15,6 +21,36 @@ type Crawler interface {
 }
 
 type DollarIndex struct{}
+
+func (is *IndicatorService) CrawlAndInsert() error {
+	di := DollarIndex{}
+	crawler := di.Init()
+	__dxy, sErr := di.Scrape(crawler)
+
+	if sErr != nil {
+		return sErr
+	}
+
+	_dxy := strings.Trim(__dxy, " ")
+	log.Printf("CrawlAndInsert:_dxy:%s", _dxy)
+
+	dxy, pfErr := strconv.ParseFloat(_dxy, 64)
+	if pfErr != nil {
+		return sErr
+	}
+
+	if cErr := is.repo.Create(&models.Indicator{
+		Name:   "U.S. Dollar Index",
+		Ticker: "DXY",
+		Value:  dxy,
+		Type:   "Fiat",
+		Domain: "www.tradingview.com",
+	}); cErr != nil {
+		return cErr
+	}
+
+	return nil
+}
 
 func (di DollarIndex) Init() *colly.Collector {
 	return colly.NewCollector(
@@ -26,6 +62,7 @@ func (di DollarIndex) Init() *colly.Collector {
 
 func (di DollarIndex) Scrape(c *colly.Collector) (string, error) {
 	var dxy string
+	var hasError error = nil
 	c.OnHTML("section[data-an-section-id=symbol-overview-page-section]", func(e *colly.HTMLElement) {
 		substringToReplace := "The current value of U.S. Dollar Index is"
 		expression := `(\d+\.\d+)`
@@ -41,60 +78,16 @@ func (di DollarIndex) Scrape(c *colly.Collector) (string, error) {
 
 	c.OnError(func(_ *colly.Response, err error) {
 		log.Println("Error:", err)
+		hasError = err
 	})
 
-	if err := c.Visit("https://www.tradingview.com/symbols/TVC-DXY/"); err != nil {
-		return "", err
-	}
-
-	c.Wait()
-
-	return dxy, nil
-}
-
-func CrawlDollarIndex() (string, error) {
-	di := DollarIndex{}
-	c := di.Init()
-	return di.Scrape(c)
-}
-
-type DaiCoin struct{}
-
-func (dc DaiCoin) Init() *colly.Collector {
-	return colly.NewCollector(
-		colly.AllowedDomains("metamask.io"),
-		colly.UserAgent("Mozilla/5.0 (compatible; JakeBot/1.0)"),
-		colly.IgnoreRobotsTxt(),
-	)
-}
-
-func (dc DaiCoin) Scrape(c *colly.Collector) (string, error) {
-	// @dev register callbacks first. colly will run the callback recursively for the target query selector
-	var prices []string
-	c.OnHTML(`[class*="token-price_price"]`, func(h *colly.HTMLElement) {
-		log.Println(h.Text)
-		prices = append(prices, h.Text)
-	})
-
-	c.OnError(func(_ *colly.Response, err error) {
-		log.Println("Error:", err)
-	})
-
-	// @dev visit the target
-	if err := c.Visit("https://metamask.io/price/dai"); err != nil {
-		return "", err
+	if vErr := c.Visit("https://www.tradingview.com/symbols/TVC-DXY/"); vErr != nil {
+		hasError = vErr
+		return "", hasError
 	}
 
 	// @dev wait for jobs to anchor values without error
 	c.Wait()
 
-	// @dev return result
-	dai := prices[0]
-	return dai, nil
-}
-
-func CrawlDaiPrice() (string, error) {
-	dc := DaiCoin{}
-	c := dc.Init()
-	return dc.Scrape(c)
+	return dxy, hasError
 }

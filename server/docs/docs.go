@@ -32,6 +32,36 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/indicator": {
+            "get": {
+                "description": "crawl tradingview for dxy and insert to db",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "api"
+                ],
+                "summary": "crawl financial indicators",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.OkResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.OkResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
         }
     }
 }`
