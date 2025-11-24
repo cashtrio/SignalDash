@@ -17,3 +17,6 @@ server:
       usds: "0xDC035D45D973e3EC169D2276dDab16f1E407384F"
       dai: "0x6B175474E89094C44Da98b954EedeAC495271d0F"
       pyusd: "0x6c3ea9036406852006290770bedfcaba0e23a0e8"
+  domains:
+    tradingview: "www.tradingview.com"
+    metamask: "metamask.io"

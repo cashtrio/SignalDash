@@ -35,19 +35,31 @@ const docTemplate = `{
         },
         "/api/indicator": {
             "get": {
-                "description": "dummy test",
+                "description": "crawl tradingview for dxy and insert to db",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "api"
                 ],
-                "summary": "dummy test",
+                "summary": "crawl financial indicators",
                 "responses": {
                     "200": {
                         "description": "OK",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/dto.OkResponse"
+                        }
                     }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.OkResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
                 }
             }
         }

@@ -1,4 +1,10 @@
 basePath: /
+definitions:
+  dto.OkResponse:
+    properties:
+      message:
+        type: string
+    type: object
 info:
   contact: {}
   description: SignalDash backend API documentation
@@ -19,14 +25,15 @@ paths:
       - api
   /api/indicator:
     get:
-      description: dummy test
+      description: crawl tradingview for dxy and insert to db
       produces:
       - application/json
       responses:
         "200":
           description: OK
-          schema: {}
-      summary: dummy test
+          schema:
+            $ref: '#/definitions/dto.OkResponse'
+      summary: crawl financial indicators
       tags:
       - api
 swagger: "2.0"
