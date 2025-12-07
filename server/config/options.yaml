@@ -22,5 +22,6 @@ server:
     metamask: "metamask.io"
   cron:
     expression:
+      every1sec: "*/1 * * * * *"
       every1min: "1 * * * * *"
       every30min: "30 * * * * *"

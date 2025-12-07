@@ -6,8 +6,10 @@ import (
 
 	"github.com/developerasun/SignalDash/server/config"
 	"github.com/developerasun/SignalDash/server/models"
+
 	"github.com/robfig/cron/v3"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -35,7 +37,7 @@ func TestIndicatorInsert(t *testing.T) {
 
 func TestCronExpression(t *testing.T) {
 	assert := assert.New(t)
-	c := cron.New()
+	c := cron.New(cron.WithSeconds())
 
 	options := &config.ViperOptions{
 		Filename:  "options",
@@ -43,19 +45,17 @@ func TestCronExpression(t *testing.T) {
 	}
 	v := options.InitConfig()
 
-	expression := v.GetString("cron.expression.every1min")
+	expression := v.GetString("server.cron.expression.every1sec")
+	require.NotEqual(t, 0, len(expression))
 
 	count := 0
 	c.AddFunc(expression, func() {
-		if count < 3 {
-			t.Log(time.Now().UTC())
-			count++
-		} else {
-			c.Stop()
-		}
+		count++
 	})
+	c.Start()
+	<-time.After(time.Second * 2)
+	c.Stop()
 
-	<-time.After(time.Second * 3)
-
-	assert.Equal(count, 2)
+	expected := 2
+	assert.Equal(expected, count)
 }
