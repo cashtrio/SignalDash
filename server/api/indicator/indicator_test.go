@@ -39,12 +39,7 @@ func TestCronExpression(t *testing.T) {
 	assert := assert.New(t)
 	c := cron.New(cron.WithSeconds())
 
-	options := &config.ViperOptions{
-		Filename:  "options",
-		ConfigDir: "../../config",
-	}
-	v := options.InitConfig()
-
+	v := config.NewEnvironment("../../config", "options").Instance
 	expression := v.GetString("server.cron.expression.every1sec")
 	require.NotEqual(t, 0, len(expression))
 

@@ -17,14 +17,10 @@ import (
 // @description SignalDash backend API documentation
 // @BasePath /
 func main() {
-	options := &config.ViperOptions{
-		Filename:  "options",
-		ConfigDir: "config",
-	}
-	v := options.InitConfig()
-	port := v.GetString("server.port")
+	environment := config.NewEnvironment("config", "options")
+	port := environment.Instance.GetString("server.port")
+	databaseName := environment.Instance.GetString("server.database.main")
 
-	databaseName := v.GetString("server.database.main")
 	db, oErr := gorm.Open(sqlite.Open(databaseName), &gorm.Config{})
 	if oErr != nil {
 		log.Fatalf("main.go: failed to open sqlite")
@@ -33,7 +29,7 @@ func main() {
 	log.Println("main.go: database migrated and opened")
 
 	apiServer := instance.NewApiServer(gin.Default(), db)
-	cronWorker := instance.NewCronWorker(v)
+	cronWorker := instance.NewCronWorker(environment.Instance)
 	cronWorker.Run()
 	apiServer.Run(":" + port)
 

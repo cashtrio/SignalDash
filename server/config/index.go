@@ -7,27 +7,27 @@ import (
 	"github.com/spf13/viper"
 )
 
-type ViperOptions struct {
-	Filename  string
-	ConfigDir string
+type environment struct {
+	Instance *viper.Viper
 }
 
-// TODO refactor with `NewXXX` constructor pattern
-func (vo *ViperOptions) InitConfig() *viper.Viper {
+func NewEnvironment(configDir, filename string) *environment {
 	wd, gErr := os.Getwd()
 	if gErr != nil {
 		log.Fatalf("InitConfig.go: failed to read working directory: %s", gErr.Error())
 	}
 
 	v := viper.New()
-	v.AddConfigPath(wd + "/" + vo.ConfigDir)
-	v.SetConfigName(vo.Filename)
+	v.AddConfigPath(wd + "/" + configDir)
+	v.SetConfigName(filename)
 
-	log.Println("InitConfig.go: ", wd+"/"+vo.ConfigDir)
+	log.Println("InitConfig.go: ", wd+"/"+configDir)
 
 	if rErr := v.ReadInConfig(); rErr != nil {
 		log.Fatalf("InitConfig.go: failed to init viper: %s", rErr.Error())
 	}
 
-	return v
+	return &environment{
+		Instance: v,
+	}
 }
