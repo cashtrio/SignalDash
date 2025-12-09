@@ -30,7 +30,7 @@ func NewApiServer(restApi *gin.Engine, db *gorm.DB) *apiServer {
 	api := restApi.Group("/api")
 	api.GET("/health", health.Health)
 	api.GET("/indicator", func(ctx *gin.Context) {
-		indicator.GetIndicator(ctx, db)
+		indicator.ScrapeDollarIndex(ctx, db)
 	})
 
 	return &apiServer{

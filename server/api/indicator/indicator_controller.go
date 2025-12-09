@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/developerasun/SignalDash/server/dto"
+	"github.com/developerasun/SignalDash/server/service"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -15,16 +16,17 @@ import (
 // @Produce json
 // @Success 200 {object} dto.OkResponse
 // @Router /api/indicator [get]
-func GetIndicator(ctx *gin.Context, db *gorm.DB) {
-	repo := IndicatorRepo{db: db}
-	service := IndicatorService{repo: &repo}
-	ciErr := service.CrawlAndInsert()
+func ScrapeDollarIndex(ctx *gin.Context, db *gorm.DB) {
+	indicator := service.NewIndicator([]string{
+		"www.tradingview.com", "tradingview.com",
+	}, "Mozilla/5.0 (compatible; DeveloperAsunBot/1.0)")
 
-	if ciErr != nil {
-		ctx.Error(ciErr)
+	dxy, sErr := indicator.ScrapeDollarIndex()
+	if sErr != nil {
+		ctx.Error(sErr)
 	}
 
-	ctx.JSON(http.StatusOK, dto.OkResponse{
-		Message: "ok",
+	ctx.JSON(http.StatusOK, dto.ScrapeDollarIndexResponse{
+		DollarIndex: dxy,
 	})
 }

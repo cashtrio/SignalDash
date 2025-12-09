@@ -14,17 +14,17 @@ type environment struct {
 func NewEnvironment(configDir, filename string) *environment {
 	wd, gErr := os.Getwd()
 	if gErr != nil {
-		log.Fatalf("InitConfig.go: failed to read working directory: %s", gErr.Error())
+		log.Fatalf("NewEnvironment.go: failed to read working directory: %s", gErr.Error())
 	}
 
 	v := viper.New()
 	v.AddConfigPath(wd + "/" + configDir)
 	v.SetConfigName(filename)
 
-	log.Println("InitConfig.go: ", wd+"/"+configDir)
+	log.Println("NewEnvironment.go: ", wd+"/"+configDir)
 
 	if rErr := v.ReadInConfig(); rErr != nil {
-		log.Fatalf("InitConfig.go: failed to init viper: %s", rErr.Error())
+		log.Fatalf("NewEnvironment.go: failed to init viper: %s", rErr.Error())
 	}
 
 	return &environment{
