@@ -1,4 +1,4 @@
-package indicator
+package controller
 
 import (
 	"net/http"

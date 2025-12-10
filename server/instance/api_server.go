@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/developerasun/SignalDash/server/api/health"
-	"github.com/developerasun/SignalDash/server/api/indicator"
+	c "github.com/developerasun/SignalDash/server/controller"
 	"github.com/developerasun/SignalDash/server/docs"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -28,9 +27,9 @@ func NewApiServer(restApi *gin.Engine, db *gorm.DB) *apiServer {
 
 	// TODO refactor grouping with controller package
 	api := restApi.Group("/api")
-	api.GET("/health", health.Health)
+	api.GET("/health", c.Health)
 	api.GET("/indicator", func(ctx *gin.Context) {
-		indicator.ScrapeDollarIndex(ctx, db)
+		c.ScrapeDollarIndex(ctx, db)
 	})
 
 	return &apiServer{
