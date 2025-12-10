@@ -3,6 +3,7 @@ package sderror
 import "errors"
 
 var (
-	NoSuchRecord = errors.New("Can't find the record from database")
-	EmptyStorage = errors.New("No records to fetch in database")
+	ErrNoSuchRecord   = errors.New("Can't find the record from database")
+	ErrEmptyStorage   = errors.New("No records to fetch in database")
+	ErrInternalServer = errors.New("Something went wrong in server side")
 )

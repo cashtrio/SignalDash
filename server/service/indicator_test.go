@@ -34,10 +34,17 @@ func cleanup(t *testing.T) *gorm.DB {
 	return db
 }
 
-func TestFindAndCreateIndicator(t *testing.T) {
+func TestFindAndCreateDollarIndex(t *testing.T) {
 	db := cleanup(t)
 	_, fErr := FindLatestDollarIndex(db)
 
 	// @dev should be clean
-	require.ErrorIs(t, fErr, sderror.EmptyStorage)
+	require.ErrorIs(t, fErr, sderror.ErrEmptyStorage)
+
+	dxy := "89.44"
+	cErr := CreateDollarIndex(db, dxy)
+	require.NoError(t, cErr)
+
+	_, rfErr := FindLatestDollarIndex(db)
+	require.NotErrorIs(t, rfErr, sderror.ErrEmptyStorage)
 }
