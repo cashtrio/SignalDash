@@ -15,10 +15,10 @@ jobs:
         with:
           labels: enhancement
 
-      # - uses: actions-ecosystem/action-add-labels@v1
-      #   if: startsWith(github.head_ref, 'test/')
-      #   with:
-      #     labels: test
+      - uses: actions-ecosystem/action-add-labels@v1
+        if: startsWith(github.head_ref, 'test/')
+        with:
+          labels: test
 
       - uses: actions-ecosystem/action-add-labels@v1
         if: startsWith(github.head_ref, 'bugfix/')
