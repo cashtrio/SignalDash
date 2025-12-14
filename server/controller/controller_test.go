@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/developerasun/SignalDash/server/config"
-	"github.com/developerasun/SignalDash/server/models"
+	"github.com/cashtrio/SignalDash/server/config"
+	"github.com/cashtrio/SignalDash/server/models"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 	"gorm.io/driver/sqlite"

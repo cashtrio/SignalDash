@@ -13,9 +13,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/developerasun/SignalDash/server/dto"
-	"github.com/developerasun/SignalDash/server/models"
-	"github.com/developerasun/SignalDash/server/sderror"
+	"github.com/cashtrio/SignalDash/server/dto"
+	"github.com/cashtrio/SignalDash/server/models"
+	"github.com/cashtrio/SignalDash/server/sderror"
 	"github.com/gocolly/colly/v2"
 	"gorm.io/gorm"
 )

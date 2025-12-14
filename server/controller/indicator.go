@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/developerasun/SignalDash/server/dto"
-	"github.com/developerasun/SignalDash/server/service"
+	"github.com/cashtrio/SignalDash/server/dto"
+	"github.com/cashtrio/SignalDash/server/service"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -20,7 +20,7 @@ import (
 func ScrapeDollarIndex(ctx *gin.Context, db *gorm.DB) {
 	indicator := service.NewIndicator([]string{
 		"www.tradingview.com", "tradingview.com",
-	}, "Mozilla/5.0 (compatible; DeveloperAsunBot/1.0)")
+	}, "Mozilla/5.0 (compatible; CashtrioBot/1.0)")
 
 	dxy, sErr := indicator.ScrapeDollarIndex()
 	if sErr != nil {

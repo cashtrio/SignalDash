@@ -5,8 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/developerasun/SignalDash/server/config"
-	"github.com/developerasun/SignalDash/server/instance"
+	"github.com/cashtrio/SignalDash/server/config"
+	"github.com/cashtrio/SignalDash/server/instance"
 )
 
 // @title SignalDash API

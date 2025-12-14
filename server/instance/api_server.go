@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	c "github.com/developerasun/SignalDash/server/controller"
-	"github.com/developerasun/SignalDash/server/docs"
+	c "github.com/cashtrio/SignalDash/server/controller"
+	"github.com/cashtrio/SignalDash/server/docs"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 

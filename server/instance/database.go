@@ -3,7 +3,7 @@ package instance
 import (
 	"log"
 
-	"github.com/developerasun/SignalDash/server/models"
+	"github.com/cashtrio/SignalDash/server/models"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )

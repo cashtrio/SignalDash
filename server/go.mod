@@ -1,4 +1,4 @@
-module github.com/developerasun/SignalDash/server
+module github.com/cashtrio/SignalDash/server
 
 go 1.24.0
 
