@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -81,4 +82,15 @@ func TestNewHttp(t *testing.T) {
 	require.True(t, len(bithumbResp.Data) == 1)
 	require.True(t, naverResp.Data.PKID == 141)
 	t.Log("value: ", bithumbResp.Data[0].OpeningPrice)
+
+	krwPurified := strings.ReplaceAll(naverResp.Data.Country[1].Value, ",", "")
+	krw, pErr := strconv.ParseFloat(krwPurified, 64)
+	tether := bithumbResp.Data[0].OpeningPrice
+
+	diff := krw - tether
+	t.Log("krw: ", krw)
+	t.Log("tether: ", tether)
+	t.Log("diff: ", diff)
+
+	require.NoError(t, pErr)
 }
