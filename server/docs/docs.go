@@ -15,6 +15,26 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/exchange-rate": {
+            "get": {
+                "description": "fetch KRW and USDT price and get price diff",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "api"
+                ],
+                "summary": "calculate exchange rate premium",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateExchangeRateDiffResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/health": {
             "get": {
                 "description": "Get server health status",
@@ -47,7 +67,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.OkResponse"
+                            "$ref": "#/definitions/dto.ScrapeDollarIndexResponse"
                         }
                     }
                 }
@@ -55,10 +75,21 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "dto.OkResponse": {
+        "dto.CreateExchangeRateDiffResponse": {
             "type": "object",
             "properties": {
-                "message": {
+                "exchange_rate_diff": {
+                    "type": "string"
+                },
+                "strong": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ScrapeDollarIndexResponse": {
+            "type": "object",
+            "properties": {
+                "dollar_index": {
                     "type": "string"
                 }
             }

@@ -1,8 +1,15 @@
 basePath: /
 definitions:
-  dto.OkResponse:
+  dto.CreateExchangeRateDiffResponse:
     properties:
-      message:
+      exchange_rate_diff:
+        type: string
+      strong:
+        type: string
+    type: object
+  dto.ScrapeDollarIndexResponse:
+    properties:
+      dollar_index:
         type: string
     type: object
 info:
@@ -11,6 +18,19 @@ info:
   title: SignalDash API
   version: "1.0"
 paths:
+  /api/exchange-rate:
+    get:
+      description: fetch KRW and USDT price and get price diff
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CreateExchangeRateDiffResponse'
+      summary: calculate exchange rate premium
+      tags:
+      - api
   /api/health:
     get:
       description: Get server health status
@@ -32,7 +52,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.OkResponse'
+            $ref: '#/definitions/dto.ScrapeDollarIndexResponse'
       summary: crawl financial indicators
       tags:
       - api
