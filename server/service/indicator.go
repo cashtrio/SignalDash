@@ -128,7 +128,7 @@ func NewCrawler(domains []string, botHeader string) *colly.Collector {
 }
 
 // TODO
-func DoHttpGet(endpoints []string) (responses []string, err error) {
+func DoHttpGet(endpoints []string) (responses [][]byte, err error) {
 	var wg sync.WaitGroup
 	var mu sync.Mutex
 
@@ -157,7 +157,7 @@ func DoHttpGet(endpoints []string) (responses []string, err error) {
 		}
 
 		mu.Lock()
-		responses = append(responses, string(data))
+		responses = append(responses, data)
 		mu.Unlock()
 		return data, nil
 	}

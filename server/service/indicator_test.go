@@ -54,14 +54,31 @@ func TestFindAndCreateDollarIndex(t *testing.T) {
 }
 
 func TestNewHttp(t *testing.T) {
-	res, err := DoHttpGet([]string{"https://api.bithumb.com/v1/ticker?markets=KRW-USDT"})
-
+	responses, err := DoHttpGet([]string{
+		"https://api.bithumb.com/v1/ticker?markets=KRW-USDT",
+		"https://m.search.naver.com/p/csearch/content/qapirender.nhn?key=calculator&pkid=141&q=%ED%99%98%EC%9C%A8&where=m&u1=keb&u6=standardUnit&u7=0&u3=USD&u4=KRW&u8=down&u2=1",
+	})
 	require.NoError(t, err)
-	require.True(t, len(res) == 1)
-	require.True(t, strings.Contains(res[0], "KRW-USDT"))
 
-	var bithumbApiResType []dto.BithumbApiItem
-	uErr := json.Unmarshal([]byte(res[0]), &bithumbApiResType)
-	t.Log("value: ", bithumbApiResType[0].OpeningPrice)
-	require.NoError(t, uErr)
+	var bithumbResp dto.ApiResponse[[]dto.BithumbApiItem]
+	var naverResp dto.ApiResponse[dto.NaverApiItem]
+
+	for _, v := range responses {
+		if strings.Contains(string(v), "KRW-USDT") {
+			err := json.Unmarshal(v, &bithumbResp.Data)
+			if err != nil {
+				require.Fail(t, "failed to unmarshal bithumb response")
+			}
+		}
+		if strings.Contains(string(v), "pkid") {
+			err := json.Unmarshal(v, &naverResp.Data)
+			if err != nil {
+				require.Fail(t, "failed to unmarshal naver response")
+			}
+		}
+	}
+
+	require.True(t, len(bithumbResp.Data) == 1)
+	require.True(t, naverResp.Data.PKID == 141)
+	t.Log("value: ", bithumbResp.Data[0].OpeningPrice)
 }

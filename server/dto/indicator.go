@@ -49,3 +49,7 @@ type NaverApiItem struct {
 	Country           []Country `json:"country"`
 	CalculatorMessage string    `json:"calculatorMessage"`
 }
+
+type ApiResponse[T any] struct {
+	Data T `json:"data"`
+}
