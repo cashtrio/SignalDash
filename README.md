@@ -35,6 +35,28 @@ To this end, I propose to build a personal financial portfolio in a "VERY" opini
 
 TBD
 
+- generate base portfolio by person
+
+  1. Cash
+  2. US ETF
+  3. Bitcoin
+
+- track indicators by interest
+
+  1. Crypto: FearGrid index
+  2. Crypto: Bitcoin dominance
+  3. Crypto: Bitcoin Pi Cycle Top Indicator
+  4. Currency: KRW/USD
+  5. Currency: KRW/USDT
+  6. Currency: KRW/EURO
+  7. Currency: Dxy
+  8. Asset: Gold
+
+- action recommendation
+
+  1. buy this more.
+  2. sell none.
+
 ## Tech stack
 
 | Section | Details                 |
