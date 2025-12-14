@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -12,6 +13,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/developerasun/SignalDash/server/dto"
 	"github.com/developerasun/SignalDash/server/models"
 	"github.com/developerasun/SignalDash/server/sderror"
 	"github.com/gocolly/colly/v2"
@@ -103,16 +105,41 @@ func CreateDollarIndex(db *gorm.DB, __dxy string) error {
 	return nil
 }
 
-func CreateExchangeRate(endpoints []string) error {
-	_, err := DoHttpGet([]string{
+func CreateExchangeRateDiff() (won float64, tether float64, err error) {
+	responses, err := DoHttpGet([]string{
 		"https://api.bithumb.com/v1/ticker?markets=KRW-USDT",
 		"https://m.search.naver.com/p/csearch/content/qapirender.nhn?key=calculator&pkid=141&q=%ED%99%98%EC%9C%A8&where=m&u1=keb&u6=standardUnit&u7=0&u3=USD&u4=KRW&u8=down&u2=1",
 	})
 	if err != nil {
-		return sderror.ErrInternalServer
+		return 0, 0, sderror.ErrInternalServer
 	}
 
-	return nil
+	var bithumbResp dto.ApiResponse[[]dto.BithumbApiItem]
+	var naverResp dto.ApiResponse[dto.NaverApiItem]
+
+	for _, v := range responses {
+		if strings.Contains(string(v), "KRW-USDT") {
+			err := json.Unmarshal(v, &bithumbResp.Data)
+			if err != nil {
+				return 0, 0, sderror.ErrInternalServer
+			}
+		}
+		if strings.Contains(string(v), "pkid") {
+			err := json.Unmarshal(v, &naverResp.Data)
+			if err != nil {
+				return 0, 0, sderror.ErrInternalServer
+			}
+		}
+	}
+
+	krwPurified := strings.ReplaceAll(naverResp.Data.Country[1].Value, ",", "")
+	won, pErr := strconv.ParseFloat(krwPurified, 64)
+	if pErr != nil {
+		return 0, 0, sderror.ErrInternalServer
+	}
+	tether = bithumbResp.Data[0].OpeningPrice
+
+	return won, tether, nil
 }
 
 // ================================================================== //
@@ -127,7 +154,6 @@ func NewCrawler(domains []string, botHeader string) *colly.Collector {
 	)
 }
 
-// TODO
 func DoHttpGet(endpoints []string) (responses [][]byte, err error) {
 	var wg sync.WaitGroup
 	var mu sync.Mutex
