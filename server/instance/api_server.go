@@ -31,6 +31,9 @@ func NewApiServer(restApi *gin.Engine, db *gorm.DB) *apiServer {
 	api.GET("/indicator", func(ctx *gin.Context) {
 		c.ScrapeDollarIndex(ctx, db)
 	})
+	api.GET("/exchange-rate", func(ctx *gin.Context) {
+		c.CreateExchangeRateDiff(ctx, db)
+	})
 
 	return &apiServer{
 		engine: restApi,

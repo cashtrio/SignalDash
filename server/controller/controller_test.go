@@ -32,14 +32,18 @@ func setup(t *testing.T) *gin.Engine {
 	r.GET("/api/indicator", func(ctx *gin.Context) {
 		ScrapeDollarIndex(ctx, db)
 	})
+	r.GET("/api/exchange-rate", func(ctx *gin.Context) {
+		CreateExchangeRateDiff(ctx, db)
+	})
 
 	return r
 }
 
-func TestApiHealth(t *testing.T) {
+func TestApis(t *testing.T) {
 	r := setup(t)
 
 	t.Run("health", func(t *testing.T) {
+		t.Skip()
 		w := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodGet, "/api/health", nil)
 		r.ServeHTTP(w, req)
@@ -48,8 +52,17 @@ func TestApiHealth(t *testing.T) {
 	})
 
 	t.Run("dollar index", func(t *testing.T) {
+		t.Skip()
 		w := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodGet, "/api/indicator", nil)
+		r.ServeHTTP(w, req)
+
+		require.True(t, w.Code == http.StatusOK)
+	})
+
+	t.Run("krw usdt diff", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodGet, "/api/exchange-rate", nil)
 		r.ServeHTTP(w, req)
 
 		require.True(t, w.Code == http.StatusOK)

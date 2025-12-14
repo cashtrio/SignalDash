@@ -2,13 +2,18 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 
+	"github.com/developerasun/SignalDash/server/dto"
 	"github.com/developerasun/SignalDash/server/models"
 	"github.com/developerasun/SignalDash/server/sderror"
 	"github.com/gocolly/colly/v2"
@@ -100,6 +105,43 @@ func CreateDollarIndex(db *gorm.DB, __dxy string) error {
 	return nil
 }
 
+func CreateExchangeRateDiff() (won float64, tether float64, err error) {
+	responses, err := DoHttpGet([]string{
+		"https://api.bithumb.com/v1/ticker?markets=KRW-USDT",
+		"https://m.search.naver.com/p/csearch/content/qapirender.nhn?key=calculator&pkid=141&q=%ED%99%98%EC%9C%A8&where=m&u1=keb&u6=standardUnit&u7=0&u3=USD&u4=KRW&u8=down&u2=1",
+	})
+	if err != nil {
+		return 0, 0, sderror.ErrInternalServer
+	}
+
+	var bithumbResp dto.ApiResponse[[]dto.BithumbApiItem]
+	var naverResp dto.ApiResponse[dto.NaverApiItem]
+
+	for _, v := range responses {
+		if strings.Contains(string(v), "KRW-USDT") {
+			err := json.Unmarshal(v, &bithumbResp.Data)
+			if err != nil {
+				return 0, 0, sderror.ErrInternalServer
+			}
+		}
+		if strings.Contains(string(v), "pkid") {
+			err := json.Unmarshal(v, &naverResp.Data)
+			if err != nil {
+				return 0, 0, sderror.ErrInternalServer
+			}
+		}
+	}
+
+	krwPurified := strings.ReplaceAll(naverResp.Data.Country[1].Value, ",", "")
+	won, pErr := strconv.ParseFloat(krwPurified, 64)
+	if pErr != nil {
+		return 0, 0, sderror.ErrInternalServer
+	}
+	tether = bithumbResp.Data[0].OpeningPrice
+
+	return won, tether, nil
+}
+
 // ================================================================== //
 // ============================== deps ============================== //
 // ================================================================== //
@@ -110,4 +152,51 @@ func NewCrawler(domains []string, botHeader string) *colly.Collector {
 		colly.UserAgent(botHeader),
 		colly.IgnoreRobotsTxt(),
 	)
+}
+
+func DoHttpGet(endpoints []string) (responses [][]byte, err error) {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+
+	callback := func(endpoint string) (data []byte, err error) {
+		defer wg.Done()
+
+		req, err := http.NewRequest(http.MethodGet, endpoint, nil)
+		if err != nil {
+			return nil, sderror.ErrInternalServer
+		}
+
+		client := &http.Client{}
+		res, dErr := client.Do(req)
+		if dErr != nil {
+			return nil, sderror.ErrInternalServer
+		}
+
+		data, rErr := io.ReadAll(res.Body)
+		cErr := res.Body.Close()
+		if cErr != nil {
+			return nil, sderror.ErrInternalServer
+		}
+
+		if rErr != nil {
+			return nil, sderror.ErrInternalServer
+		}
+
+		mu.Lock()
+		responses = append(responses, data)
+		mu.Unlock()
+		return data, nil
+	}
+
+	if len(endpoints) >= 1 {
+		wg.Add(len(endpoints))
+		for _, v := range endpoints {
+			go callback(v)
+		}
+		wg.Wait()
+	} else {
+		callback(endpoints[len(endpoints)-1])
+	}
+
+	return responses, nil
 }
