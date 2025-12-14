@@ -8,6 +8,11 @@ type ScrapeDollarIndexResponse struct {
 	DollarIndex string `json:"dollar_index"`
 }
 
+type CreateExchangeRateDiffResponse struct {
+	ExchangeRateDiff string `json:"exchange_rate_diff"`
+	Strong           string `json:"strong"`
+}
+
 type BithumbApiItem struct {
 	Market             string  `json:"market"`
 	TradeDate          string  `json:"trade_date"`
