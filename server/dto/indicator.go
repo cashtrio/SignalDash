@@ -1,5 +1,7 @@
 package dto
 
+import "time"
+
 type OkResponse struct {
 	Message string `json:"message"`
 }
@@ -53,6 +55,14 @@ type NaverApiItem struct {
 	Count             int       `json:"count"`
 	Country           []Country `json:"country"`
 	CalculatorMessage string    `json:"calculatorMessage"`
+}
+
+type GoldApiItem struct {
+	Name              string    `json:"name"`
+	Price             float64   `json:"price"`
+	Symbol            string    `json:"symbol"`
+	UpdatedAt         time.Time `json:"updatedAt"`
+	UpdatedAtReadable string    `json:"updatedAtReadable"`
 }
 
 type ApiResponse[T any] struct {
